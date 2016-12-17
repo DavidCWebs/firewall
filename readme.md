@@ -20,6 +20,13 @@ sudo chmod +x build-firewall
 ln -s ~/sysadmin/firewall/build-firewall /usr/local/sbin/build-firewall
 ~~~
 
+## Persistence
+Note that firewall rules are held in memory - they won't persist across reboots.
+
+Use `iptables-persistent` to load rules on boot.
+
+**Important**: if you change rules, run `sudo dpkg-reconfigure iptables-persistent`.
+
 ## Resources
 - Iptables Man Page: https://linux.die.net/man/8/iptables
 - Comprehensive set of rules, well commented: http://www.thegeekstuff.com/scripts/iptables-rules
