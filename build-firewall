@@ -6,8 +6,12 @@
 # ------------------------------------------------------------------------------
 IPT="/sbin/iptables"
 IPT6="/sbin/ip6tables"
-SSH_PORT=XXXX
-HOME_IP=X.X.X.X
+# Set directory
+THIS=$(readlink -f ${BASH_SOURCE[0]})
+PROJECT_DIR=$(dirname $THIS)
+
+# Include dependencies
+. "$PROJECT_DIR/variables"
 
 # Set default policies to "ACCEPT"
 $IPT -P INPUT ACCEPT
