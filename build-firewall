@@ -6,8 +6,8 @@
 # ------------------------------------------------------------------------------
 IPT="/sbin/iptables"
 IPT6="/sbin/ip6tables"
-SSH_PORT=2540
-HOME_IP=88.87.168.78
+SSH_PORT=XXXX
+HOME_IP=X.X.X.X
 
 # Set default policies to "ACCEPT"
 $IPT -P INPUT ACCEPT
