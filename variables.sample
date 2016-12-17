@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Copy this file as `variables`, gitignore the copy, add your variables
+# ------------------------------------------------------------------------------
+SSH_PORT=XXXX
+HOME_IP=X.X.X.X
