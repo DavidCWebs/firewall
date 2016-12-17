@@ -64,6 +64,10 @@ $IPT -A INPUT -m state --state INVALID -j LOGGING
 $IPT -A INPUT -i eth0 -p tcp --dport $SSH_PORT -m state --state NEW,ESTABLISHED -j ACCEPT
 $IPT -A OUTPUT -o eth0 -p tcp --sport $SSH_PORT -m state --state ESTABLISHED -j ACCEPT
 
+# Allow outgoing SSH on port 22: Connect from this server to an outside server
+$IPT -A OUTPUT -o eth0 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
 # Allow incoming & outgoing HTTP, with output allowed on NEW & ESTABLISHED
 # connections - NEW output connections necessary for `apt-get`
 $IPT -A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
