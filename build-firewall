@@ -36,10 +36,20 @@ $IPT -P INPUT DROP
 $IPT -P FORWARD DROP
 $IPT -P OUTPUT DROP
 
-# This policy drops all IPv6 traffic
+# IPv6 traffic
 $IPT6 -P INPUT DROP
-$IPT6 -P OUTPUT DROP
 $IPT6 -P FORWARD DROP
+$IPT6 -P OUTPUT ACCEPT
+$IPT6 -A INPUT -i lo -j ACCEPT
+$IPT6 -A INPUT -s ::1/128 ! -i lo -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A INPUT -p ipv6-icmp -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+$IPT6 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPT6 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "ip6tables_INPUT_denied: " --log-level 7
+$IPT6 -A INPUT -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A FORWARD -m limit --limit 5/min -j LOG --log-prefix "ip6tables_FORWARD_denied: " --log-level 7
+$IPT6 -A FORWARD -j REJECT --reject-with icmp6-port-unreachable
 
 # Create a LOGGING chain
 $IPT -N LOGGING
