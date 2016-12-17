@@ -62,14 +62,14 @@ $IPT -A OUTPUT -o eth0 -p tcp --sport $SSH_PORT -m state --state ESTABLISHED -j 
 
 # Allow incoming HTTP, with output allowed on an established connection
 $IPT -A INPUT -i eth0 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
-$IPT -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+# NEW connections necessary for `apt-get`
+$IPT -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Allow outgoing HTTP, with output allowed on an established connection
-#$IPT -A OUTPUT -o eth0 -p tcp --sport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 $IPT -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-$IPT -A OUTPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
-$IPT -A OUTPUT -p tcp --dport 53 -m state --state NEW -j ACCEPT
-$IPT -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
+#$IPT -A OUTPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+#$IPT -A OUTPUT -p tcp --dport 53 -m state --state NEW -j ACCEPT
+#$IPT -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
 
 # Allow incoming HTTPS, with output allowed on an established connection
 $IPT -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
