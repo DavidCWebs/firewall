@@ -94,8 +94,8 @@ $IPT -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
 # $IPT -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Allow incoming and outgoing HTTPS, protocol not specified
-$IPT -A INPUT -i eth0 --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-$IPT -A OUTPUT -o eth0 --sport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+$IPT -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+$IPT -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Allow ping from outside to inside - `x.x.x.x/32` denotes an exact IP, rather than a range
 $IPT -A INPUT -s $HOME_IP/32 -p icmp -m icmp --icmp-type 8 -j ACCEPT
