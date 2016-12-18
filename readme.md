@@ -27,6 +27,11 @@ Use `iptables-persistent` to load rules on boot.
 
 **Important**: if you change rules, run `sudo dpkg-reconfigure iptables-persistent`.
 
+## Notes
+- `-o` refers to the output interface
+- `-i` refers to the input interface
+- `-p` specify protocol
+
 ## Resources
 - [Iptables Man Page](https://linux.die.net/man/8/iptables)
 - [Comprehensive set of rules, well commented](http://www.thegeekstuff.com/scripts/iptables-rules)
