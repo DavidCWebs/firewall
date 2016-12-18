@@ -34,7 +34,7 @@ $IPT -X
 # Set default chain policies for IPv4 to allow access
 $IPT -P INPUT DROP
 $IPT -P FORWARD DROP
-$IPT -P OUTPUT ACCEPT
+$IPT -P OUTPUT DROP
 
 # IPv6 traffic
 $IPT6 -P INPUT DROP
