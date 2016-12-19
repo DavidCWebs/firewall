@@ -8,8 +8,9 @@ All IPv6 traffic is dropped.
 
 ## Installation & Usage
 1. Clone this repo (e.g. to `~/sysadmin`)
-2. Enter the local IP address (`$HOME_IP`) (to lock down pinging) in the `build-firewall` script
-3. Enter the `SSH_PORT` in the `build-firewall` script
+2. Copy `variables.sample` to `variable` in the same directory: `cp variables.sample variables`
+2. Enter the local IP address (`$HOME_IP`) (to lock down pinging) in the `build-firewall` `variables` file
+3. Enter the `SSH_PORT` in the `variables` file
 2. Make `build-firewall` executable
 2. Create a symlink to `build-firewall` from within your `$PATH`
 3. Run as `build-firewall` as sudo
@@ -17,7 +18,7 @@ All IPv6 traffic is dropped.
 ~~~sh
 cd ~/sysadmin/firewall
 sudo chmod +x build-firewall
-ln -s ~/sysadmin/firewall/build-firewall /usr/local/sbin/build-firewall
+sudo ln -s ~/sysadmin/firewall/build-firewall /usr/local/sbin/build-firewall
 ~~~
 
 ## Persistence
