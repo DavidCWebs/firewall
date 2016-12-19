@@ -1,0 +1,62 @@
+#!/bin/bash
+
+IPT="/sbin/iptables"
+IPT6="/sbin/ip6tables"
+# Set directory
+THIS=$(readlink -f ${BASH_SOURCE[0]})
+PROJECT_DIR=$(dirname $THIS)
+
+# Include dependencies
+. "$PROJECT_DIR/variables"
+
+# Set default policies to "ACCEPT"
+$IPT -P INPUT ACCEPT
+$IPT -P FORWARD ACCEPT
+$IPT -P OUTPUT ACCEPT
+
+# Flush `nat` and `mangle` tables
+# @TODO: CHECK THIS!!!!!!!!!!!!!!
+$IPT -t nat -F
+$IPT -t mangle -F
+
+
+# Flush all chains: this will flush the selected chain or all the chains in the
+# table if no chain is specified. Equivalent to deleting all the rules one by one.
+$IPT -F
+
+# Delete all non-default chains - equivalent to `--delete-chain`
+$IPT -X
+
+# IPv6 traffic
+$IPT6 -P INPUT DROP
+$IPT6 -P FORWARD DROP
+$IPT6 -P OUTPUT ACCEPT
+$IPT6 -A INPUT -i lo -j ACCEPT
+$IPT6 -A INPUT -s ::1/128 ! -i lo -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A INPUT -p ipv6-icmp -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+$IPT6 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPT6 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "ip6tables_INPUT_denied: " --log-level 7
+$IPT6 -A INPUT -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A FORWARD -m limit --limit 5/min -j LOG --log-prefix "ip6tables_FORWARD_denied: " --log-level 7
+$IPT6 -A FORWARD -j REJECT --reject-with icmp6-port-unreachable
+
+# Create a LOGGING chain
+$IPT -N LOGGING
+$IPT -P INPUT ACCEPT
+$IPT -P FORWARD ACCEPT
+$IPT -P OUTPUT ACCEPT
+$IPT -A INPUT -i lo -j ACCEPT
+$IPT -A INPUT -s 127.0.0.0/8 ! -i lo -j REJECT --reject-with icmp-port-unreachable
+$IPT -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+$IPT -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+$IPT -A INPUT -p tcp -m tcp --dport 443 -m state --state NEW -j ACCEPT
+$IPT -A INPUT -p tcp -m state --state NEW -m tcp --dport $SSH_PORT -j ACCEPT
+$IPT -A INPUT -p tcp -m tcp --dport $SSH_PORT -j ACCEPT
+$IPT -A INPUT -s $HOME_IP/32 -p icmp -m icmp --icmp-type 8 -j ACCEPT
+$IPT -A INPUT -j LOGGING
+$IPT -A LOGGING -p icmp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied ICMP: " --log-level 7
+$IPT -A LOGGING -p udp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied UDP: " --log-level 7
+$IPT -A LOGGING -p tcp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied TCP: " --log-level 7
+$IPT -A LOGGING -j DROP
