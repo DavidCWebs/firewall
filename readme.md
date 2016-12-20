@@ -19,6 +19,8 @@ All IPv6 traffic is dropped.
 cd ~/sysadmin/firewall
 sudo chmod +x build-firewall
 sudo ln -s ~/sysadmin/firewall/build-firewall /usr/local/sbin/build-firewall
+sudo chmod +x simple-firewall
+sudo ln -s ~/sysadmin/firewall/simple-firewall /usr/local/sbin/simple-firewall
 ~~~
 
 ## Persistence
