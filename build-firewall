@@ -106,7 +106,8 @@ $IPT -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
 
 # Allow Sendmail or Postfix
 $IPT -A INPUT -i eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
-$IPT -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
+#$IPT -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
+$IPT -A OUTPUT -o eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Help reduce the effect of a DoS attack
 $IPT -A INPUT -p tcp --dport 80 -m limit --limit 60/minute --limit-burst 100 -j ACCEPT
