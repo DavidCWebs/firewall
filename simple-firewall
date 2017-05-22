@@ -15,7 +15,6 @@ $IPT -P FORWARD ACCEPT
 $IPT -P OUTPUT ACCEPT
 
 # Flush `nat` and `mangle` tables
-# @TODO: CHECK THIS!!!!!!!!!!!!!!
 $IPT -t nat -F
 $IPT -t mangle -F
 
