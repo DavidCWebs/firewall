@@ -43,7 +43,7 @@ Use `iptables-persistent` to load rules on boot.
 - [Persistence!](http://dev-notes.eu/2016/08/persistent-iptables-rules-in-ubuntu-16-04-xenial-xerus/)
 - [More examples of rules]( http://www.thegeekstuff.com/2011/06/iptables-rules-examples/)
 - [Linode guide to server security]( https://www.linode.com/docs/security/securing-your-server#basic-iptables-rulesets-for-ipv4-and-ipv6)
-- [Listing, deleting rules]( https://www.digitalocean.com/community/tutorials/how-to-list-and-delete-iptables-firewall-rules)
+- [Listing, deleting rules]( https://www.digitalocean.com/community/tutorials/how-to-list-and-delete-iptables-firewall-rules) - good description of flushing tables
 - [Good example of a script based iptables "service"](https://thelowedown.wordpress.com/2008/07/03/iptables-how-to-use-the-limits-module/)
 - [Uses a pair of scripts under `/etc/network` fo achieve persistence](http://kvz.io/blog/2007/07/28/block-brute-force-attacks-with-iptables/)
 - [Good description of preventing DOS with iptables](http://blog.bodhizazen.net/linux/prevent-dos-with-iptables/)

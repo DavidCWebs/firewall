@@ -2,7 +2,7 @@
 #
 # ------------------------------------------------------------------------------
 # An iptables script that will initialise firewall rules.
-# Tested for Ubuntu 16.04
+# Tested for Ubuntu 16.04.
 # ------------------------------------------------------------------------------
 IPT="/sbin/iptables"
 IPT6="/sbin/ip6tables"
@@ -19,52 +19,29 @@ $IPT -P FORWARD ACCEPT
 $IPT -P OUTPUT ACCEPT
 
 # Flush `nat` and `mangle` tables
-# @TODO: CHECK THIS!!!!!!!!!!!!!!
 $IPT -t nat -F
 $IPT -t mangle -F
 
-# Flush all chains: this will flush the selected chain or all the chains in the
-# table if no chain is specified. Equivalent to deleting all the rules one by one.
+# Flush all chains: equivalent to deleting all the firewall rules one by one.
 $IPT -F
 
-# Delete all non-default chains - equivalent to `--delete-chain`
+# Flush all non-default chains - equivalent to `--delete-chain`
 $IPT -X
 
-# Set default chain policies for IPv4 to allow access
+# Set default chain policies for IPv4
+# ------------------------------------------------------------------------------
 $IPT -P INPUT DROP
 $IPT -P FORWARD DROP
 $IPT -P OUTPUT DROP
 
-# IPv6 traffic
-$IPT6 -t nat -F
-$IPT6 -t mangle -F
-$IPT6 -F
-$IPT6 -X
-$IPT6 -P INPUT DROP
-$IPT6 -P FORWARD DROP
-$IPT6 -P OUTPUT ACCEPT
-$IPT6 -A INPUT -i lo -j ACCEPT
-$IPT6 -A INPUT -s ::1/128 ! -i lo -j REJECT --reject-with icmp6-port-unreachable
-$IPT6 -A INPUT -p ipv6-icmp -j ACCEPT
-$IPT6 -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-$IPT6 -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
-$IPT6 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-$IPT6 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "ip6tables_INPUT_denied: " --log-level 7
-$IPT6 -A INPUT -j REJECT --reject-with icmp6-port-unreachable
-$IPT6 -A FORWARD -m limit --limit 5/min -j LOG --log-prefix "ip6tables_FORWARD_denied: " --log-level 7
-$IPT6 -A FORWARD -j REJECT --reject-with icmp6-port-unreachable
-
 # Create a LOGGING chain
 $IPT -N LOGGING
 
+# Firewall Rules
 # ------------------------------------------------------------------------------
-# Rules
-# ------------------------------------------------------------------------------
-
 # Accept all established inbound connections: self protection - adding a new rule
 # won't kill the connection. This rule makes use of the connection tracking extension.
 $IPT -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-#$IPT -A OUTPUT -o -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 
 # Allow loopback access
 $IPT -A INPUT -i lo -j ACCEPT
@@ -112,16 +89,38 @@ $IPT -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
 
 # Allow Sendmail or Postfix
 $IPT -A INPUT -i eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
-#$IPT -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
 $IPT -A OUTPUT -o eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 # Help reduce the effect of a DoS attack
 $IPT -A INPUT -p tcp --dport 80 -m limit --limit 60/minute --limit-burst 100 -j ACCEPT
 
-# Log dropped packets
+# Log dropped packets - if packet gets this far, it's going to be dropped
 $IPT -A INPUT -j LOGGING
 $IPT -A LOGGING -m state --state INVALID -m limit --limit 5/min -j LOG --log-prefix "iptables-denied-INVALID: " --log-level 7
 $IPT -A LOGGING -p icmp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied-ICMP: " --log-level 7
 $IPT -A LOGGING -p udp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied-UDP: " --log-level 7
 $IPT -A LOGGING -p tcp -m limit --limit 5/min -j LOG --log-prefix "iptables-denied-TCP: " --log-level 7
 $IPT -A LOGGING -j DROP
+
+# IPv6 traffic: Note that default policy for OUTPUT is ACCEPT
+# ------------------------------------------------------------------------------
+$IPT6 -P INPUT ACCEPT
+$IPT6 -P FORWARD ACCEPT
+$IPT6 -P OUTPUT ACCEPT
+$IPT6 -t nat -F
+$IPT6 -t mangle -F
+$IPT6 -F
+$IPT6 -X
+$IPT6 -P INPUT DROP
+$IPT6 -P FORWARD DROP
+$IPT6 -P OUTPUT ACCEPT
+$IPT6 -A INPUT -i lo -j ACCEPT
+$IPT6 -A INPUT -s ::1/128 ! -i lo -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A INPUT -p ipv6-icmp -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+$IPT6 -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+$IPT6 -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPT6 -A INPUT -m limit --limit 5/min -j LOG --log-prefix "ip6tables_INPUT_denied: " --log-level 7
+$IPT6 -A INPUT -j REJECT --reject-with icmp6-port-unreachable
+$IPT6 -A FORWARD -m limit --limit 5/min -j LOG --log-prefix "ip6tables_FORWARD_denied: " --log-level 7
+$IPT6 -A FORWARD -j REJECT --reject-with icmp6-port-unreachable
