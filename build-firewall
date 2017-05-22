@@ -93,11 +93,17 @@ $IPT -A OUTPUT -p tcp --dport 53 -m state --state NEW -j ACCEPT
 $IPT -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
 
 # Incoming HTTPS
+# Packets from remote system to local 443:
 $IPT -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Outbound packets leaving on 443:
 $IPT -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 
-# Outgoint HTTPS
+# Outgoing HTTPS
+# Outbound packets leaving and going to remote 443:
 $IPT -A OUTPUT -o eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+# Inbound packets from port 443 of the Remote system:
 $IPT -A INPUT -i eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 
 # Allow ping from outside to inside - `x.x.x.x/32` denotes an exact IP, rather than a range

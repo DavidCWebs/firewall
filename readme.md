@@ -11,9 +11,9 @@ All IPv6 traffic is dropped.
 2. Copy `variables.sample` to `variable` in the same directory: `cp variables.sample variables`
 2. Enter the local IP address (`$HOME_IP`) (to lock down pinging) in the `build-firewall` `variables` file
 3. Enter the `SSH_PORT` in the `variables` file
-2. Make `build-firewall` executable
-2. Create a symlink to `build-firewall` from within your `$PATH`
-3. Run as `build-firewall` as sudo
+2. Make `build-firewall` and `simple-firewall` executable
+2. Create symlinks to `build-firewall` and `simple-firewall` from within your `$PATH`
+3. Run `sudo build-firewall`
 
 ~~~sh
 cd ~/sysadmin/firewall
@@ -47,4 +47,5 @@ Use `iptables-persistent` to load rules on boot.
 - [Good example of a script based iptables "service"](https://thelowedown.wordpress.com/2008/07/03/iptables-how-to-use-the-limits-module/)
 - [Uses a pair of scripts under `/etc/network` fo achieve persistence](http://kvz.io/blog/2007/07/28/block-brute-force-attacks-with-iptables/)
 - [Good description of preventing DOS with iptables](http://blog.bodhizazen.net/linux/prevent-dos-with-iptables/)
-- - [Netfilter docs on Packet Filtering](http://www.netfilter.org/documentation/HOWTO/packet-filtering-HOWTO-7.html#ss7.3)
+- [Netfilter docs on Packet Filtering](http://www.netfilter.org/documentation/HOWTO/packet-filtering-HOWTO-7.html#ss7.3)
+- [sport vs dport](http://stackoverflow.com/a/28945345/3590673)
